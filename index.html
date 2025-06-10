@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="da">
 <head>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js"></script>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Genbrugsmarkedet App</title>
@@ -202,7 +204,7 @@
 <body>
   <div class="phone-frame" id="app">
     <div class="status-bar">
-      <span>9:41</span>
+      <span>12:00</span>
       <span>📶 🔋</span>
     </div>
 
@@ -255,6 +257,24 @@
   </div>
 
   <script>
+    <script type="module">
+  // Import the functions you need from the SDKs you need
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-app.js";
+  // TODO: Add SDKs for Firebase products that you want to use
+  // https://firebase.google.com/docs/web/setup#available-libraries
+
+  // Your web app's Firebase configuration
+    const firebaseConfig = {
+    apiKey: "AIzaSyDAqXYL5WthlWvjfDBc-NdZCu01ygkrom0",
+    authDomain: "teknologi-a1c06.firebaseapp.com",
+    projectId: "teknologi-a1c06",
+    storageBucket: "teknologi-a1c06.firebasestorage.app",
+    messagingSenderId: "323792176035",
+    appId: "1:323792176035:web:022e3cd61c3e6b5c909016"
+    };
+
+  // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
     let map;
     function initMap() {
       map = new google.maps.Map(document.getElementById("map"), {
@@ -344,5 +364,20 @@
       }
     }
   </script>
-</body>
+    <div id="signupModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center;">
+      <div style="background: white; padding: 20px; border-radius: 10px; width: 300px; text-align: center;">
+          <h2>Opret Bruger</h2>
+          <form id="signupForm">
+              <input type="text" id="username" placeholder="Brugernavn" required style="width: 100%; padding: 10px; margin: 5px 0;">
+              <input type="password" id="password" placeholder="Adgangskode" required style="width: 100%; padding: 10px; margin: 5px 0;">
+              <button type="submit" style="width: 100%; padding: 10px; background: #4285f4; color: white; border: none; border-radius: 5px;">Opret</button>
+          </form>
+          <p id="signupMessage" style="color: red;"></p>
+          <button onclick="document.getElementById('signupModal').style.display = 'none'" style="margin-top: 10px;">Luk</button>
+        </div>
+      </div>
+
+    <!-- Knap til at åbne signup-formularen -->
+    <button onclick="document.getElementById('signupModal').style.display = 'flex'" style="position: fixed; bottom: 20px; right: 20px; padding: 10px; background: #4285f4; color: white; border: none; border-radius: 5px;">Opret Bruger</button>
+  </body>
 </html>
