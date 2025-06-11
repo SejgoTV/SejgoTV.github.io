@@ -132,22 +132,22 @@
         orderBy("timestamp")
       );
 
-      onSnapshot(q, (snapshot) => {
-        messagesDiv.innerHTML = "";
-      
-        if (snapshot.empty) {
-          messagesDiv.innerHTML = "<p>Ingen beskeder fundet.</p>";
-          return;
-        }
-      
-        snapshot.forEach(doc => {
-          const msg = doc.data();
-          console.log("MSG:", msg); // 👈 Debug
-          const p = document.createElement("p");
-          p.textContent = `${msg.from}: ${msg.text}`;
-          messagesDiv.appendChild(p);
-        });
+    onSnapshot(q, (snapshot) => {
+      messagesDiv.innerHTML = "";
+    
+      if (snapshot.empty) {
+        messagesDiv.innerHTML = "<p>Ingen beskeder fundet.</p>";
+        return;
+      }
+    
+      snapshot.forEach(doc => {
+        const msg = doc.data();
+        console.log("MSG:", msg); // 👈 Debug
+        const p = document.createElement("p");
+        p.textContent = `${msg.from}: ${msg.text}`;
+        messagesDiv.appendChild(p);
       });
+    });
 
 
     sendBtn.addEventListener("click", async () => {
