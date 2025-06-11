@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8" />
   <title>Opslag</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <h1>Opslag</h1>
-  <div id="post-content">Indlæser...</div>
+  <div class="card" id="post-content">Indlæser...</div>
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
@@ -24,17 +24,17 @@
     const params = new URLSearchParams(window.location.search);
     const id = params.get("id");
 
-    const postContent = document.getElementById("post-content");
+    const container = document.getElementById("post-content");
 
     async function loadPost() {
       const docRef = doc(db, "posts", id);
       const docSnap = await getDoc(docRef);
       if (docSnap.exists()) {
         const data = docSnap.data();
-        postContent.innerHTML = `
+        container.innerHTML = `
           <h2>${data.title}</h2>
           <p>Pris: ${data.price} DKK</p>
-          <img src="${data.img}" style="max-width:100%"><br>
+          <img src="${data.img}" alt="Billede"><br>
           <p>${data.desc}</p>
           <p>Type: ${data.type}</p>
           <p>Sælger: ${data.userEmail}</p>
@@ -43,7 +43,7 @@
           </a>
         `;
       } else {
-        postContent.innerHTML = "Opslag ikke fundet.";
+        container.innerHTML = "Opslag ikke fundet.";
       }
     }
 
