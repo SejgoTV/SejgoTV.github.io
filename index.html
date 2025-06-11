@@ -1,142 +1,134 @@
 <!DOCTYPE html>
 <html lang="da">
-  
-<html>
- <body>
-<!-- Login-knap (tilføj i din navbar eller et passende sted) -->
-<button onclick="openModal('loginModal')">Login</button>
-
-<!-- Login-modal -->
-<div id="loginModal" class="modal">
-  <div class="modal-content">
-    <span onclick="closeModal('loginModal')" class="close">&times;</span>
-    <h2>Login</h2>
-    <form id="loginForm">
-      <input type="text" id="loginEmail" placeholder="Email" required>
-      <input type="password" id="loginPassword" placeholder="Adgangskode" required>
-      <button type="submit">Login</button>
-    </form>
-    <p id="loginMessage" class="message"></p>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Genbrugsmarkedet App</title>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js"></script>
+  <style>
+    body {
+      background-color: #e5e7eb;
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .phone-frame {
+      width: 375px;
+      height: 667px;
+      border: 16px solid #111827;
+      border-radius: 40px;
+      background-color: #fff;
+      box-shadow: 0 0 20px rgba(0,0,0,0.2);
+      overflow: hidden;
+      position: relative;
+    }
+    .status-bar, .user-info, .auth-buttons, .search-bar, .card, .modal-content input,
+    .modal-content textarea, .modal-content select {
+      padding: 10px;
+    }
+    .modal {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.4);
+      display: none;
+      justify-content: center;
+      align-items: center;
+    }
+    .modal-content {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      width: 300px;
+    }
+    .fab {
+      position: absolute;
+      bottom: 70px;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: #22c55e;
+      color: white;
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      font-size: 32px;
+      line-height: 56px;
+      text-align: center;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="phone-frame">
+    <div class="status-bar">
+      <span>12:00</span>
+      <span>📶 🔋</span>
+    </div>
+    <div id="loginModal" class="modal">
+      <div class="modal-content">
+        <span class="close" onclick="closeAuthModal()">&times;</span>
+        <h2>Login</h2>
+        <form id="loginForm">
+          <input type="email" placeholder="Email" required>
+          <input type="password" placeholder="Adgangskode" required>
+          <button type="submit">Login</button>
+        </form>
+      </div>
+    </div>
+    <div id="signupModal" class="modal">
+      <div class="modal-content">
+        <span class="close" onclick="closeAuthModal()">&times;</span>
+        <h2>Opret Bruger</h2>
+        <form id="signupForm">
+          <input type="email" placeholder="Email" required>
+          <input type="password" placeholder="Adgangskode" required>
+          <button type="submit">Opret</button>
+        </form>
+      </div>
+    </div>
+    <div class="auth-buttons">
+      <button onclick="openAuthModal('loginModal')">Login</button>
+      <button onclick="openAuthModal('signupModal')">Opret Bruger</button>
+    </div>
+    <div class="user-info" style="display:none; text-align:center;">
+      <p id="userEmail"></p>
+      <button onclick="logout()">Log ud</button>
+    </div>
+    <div class="app-header" style="text-align:center; background:#22c55e; color:white;">
+      Genbrugsmarkedet
+    </div>
+    <div class="app-content">
+      <div class="search-bar">
+        <input id="search" type="text" placeholder="🔍 Søg opslag...">
+      </div>
+      <div id="card-list"></div>
+    </div>
+    <div class="fab" onclick="openModal()">+</div>
+    <div class="modal" id="modal">
+      <div class="modal-content">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <h3>Opret opslag</h3>
+        <input id="title" type="text" placeholder="Titel" />
+        <input id="price" type="text" placeholder="Pris (DKK)" />
+        <input id="image" type="file" accept="image/*" />
+        <textarea id="description" rows="3" placeholder="Beskrivelse..."></textarea>
+        <select id="materialType">
+          <option value="træ">Træ</option>
+          <option value="mursten">Mursten</option>
+          <option value="metal">Metal</option>
+          <option value="andet">Andet</option>
+        </select>
+        <button onclick="addPost()">Tilføj</button>
+      </div>
+    </div>
+    <script type="module" src="./app.js"></script>
   </div>
-</div>
-
-<!-- Signup-modal (eksisterende, men opdateret til Firebase Auth) -->
-<div id="signupModal" class="modal">
-  <div class="modal-content">
-    <span onclick="closeModal('signupModal')" class="close">&times;</span>
-    <h2>Opret Bruger</h2>
-    <form id="signupForm">
-      <input type="text" id="signupEmail" placeholder="Email" required>
-      <input type="password" id="signupPassword" placeholder="Adgangskode" required>
-      <button type="submit">Opret</button>
-    </form>
-    <p id="signupMessage" class="message"></p>
-  </div>
-</div>
-
-<!-- Tilføj denne CSS -->
-<style>
-  .modal {
-    display: none;
-    position: fixed;
-    z-index: 1000;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0,0,0,0.5);
-  }
-  .modal-content {
-    background-color: #1a1a1a;
-    margin: 15% auto;
-    padding: 20px;
-    border: 1px solid #333;
-    width: 300px;
-    border-radius: 10px;
-  }
-  .close {
-    color: #aaa;
-    float: right;
-    font-size: 28px;
-    cursor: pointer;
-  }
-  .message {
-    margin-top: 10px;
-  }
-</style>
-  // Tilføj Firebase Auth SDK
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js"></script>
-
-<script>
-  // Firebase konfiguration (samme som før)
-  const firebaseConfig = { ... };
-  const app = firebase.initializeApp(firebaseConfig);
-  const db = firebase.firestore();
-  const auth = firebase.auth();
-
-  // Modal funktioner
-  function openModal(id) { document.getElementById(id).style.display = 'block'; }
-  function closeModal(id) { document.getElementById(id).style.display = 'none'; }
-
-  // Signup med Firebase Authentication
-  document.getElementById("signupForm").addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const email = document.getElementById("signupEmail").value;
-    const password = document.getElementById("signupPassword").value;
-    const message = document.getElementById("signupMessage");
-
-    try {
-      // Opret bruger i Firebase Auth
-      const userCredential = await auth.createUserWithEmailAndPassword(email, password);
-      
-      // Gem yderligere brugerdata i Firestore
-      await db.collection("users").doc(userCredential.user.uid).set({
-        email: email,
-        createdAt: firebase.firestore.FieldValue.serverTimestamp()
-      });
-
-      message.textContent = "Bruger oprettet!";
-      message.style.color = "green";
-      setTimeout(() => closeModal('signupModal'), 2000);
-    } catch (error) {
-      message.textContent = error.message;
-      message.style.color = "red";
-    }
-  });
-
-  // Login med Firebase Authentication
-  document.getElementById("loginForm").addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const email = document.getElementById("loginEmail").value;
-    const password = document.getElementById("loginPassword").value;
-    const message = document.getElementById("loginMessage");
-
-    try {
-      await auth.signInWithEmailAndPassword(email, password);
-      message.textContent = "Login succesfuldt!";
-      message.style.color = "green";
-      setTimeout(() => {
-        closeModal('loginModal');
-        window.location.href = "/dashboard.html"; // Omdiriger til dashboard
-      }, 1000);
-    } catch (error) {
-      message.textContent = error.message;
-      message.style.color = "red";
-    }
-  });
-
-  // Tjek om bruger er logget ind
-  auth.onAuthStateChanged(user => {
-    if (user) {
-      console.log("Bruger er logget ind:", user.email);
-      // Skjul login-knap eller vis logout
-    } else {
-      console.log("Ingen bruger logget ind");
-    }
-  });
-</script>
-
-    <!-- Knap til at åbne signup-formularen -->
-    <button onclick="document.getElementById('signupModal').style.display = 'flex'" style="position: fixed; bottom: 20px; right: 20px; padding: 10px; background: #4285f4; color: white; border: none; border-radius: 5px;">Opret Bruger</button>
-  </body>
+</body>
 </html>
