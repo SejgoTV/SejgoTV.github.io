@@ -1,55 +1,73 @@
 body {
-      background-color: #e5e7eb;
-      font-family: Arial, sans-serif;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      margin: 0;
-    }
-    .phone-frame {
-      width: 375px;
-      height: 667px;
-      border: 16px solid #111827;
-      border-radius: 40px;
-      background-color: #fff;
-      box-shadow: 0 0 20px rgba(0,0,0,0.2);
-      overflow-y: auto;
-      position: relative;
-    }
-    .status-bar, .user-info, .auth-buttons, .search-bar, .card, .modal-content input,
-    .modal-content textarea, .modal-content select {
-      padding: 10px;
-    }
-    .modal {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0,0,0,0.4);
-      display: none;
-      justify-content: center;
-      align-items: center;
-    }
-    .modal-content {
-      background: white;
-      padding: 20px;
-      border-radius: 10px;
-      width: 300px;
-    }
-    .fab {
-      position: sticky;
-      bottom: 70px;
-      left: 50%;
-      transform: translateX(-50%);
-      background-color: #22c55e;
-      color: white;
-      width: 56px;
-      height: 56px;
-      border-radius: 50%;
-      font-size: 32px;
-      line-height: 56px;
-      text-align: center;
-      cursor: pointer;
-    }
+background-color: #e5e7eb;
+font-family: Arial, sans-serif;
+display: flex;
+justify-content: center;
+align-items: center;
+height: 100vh;
+margin: 0;
+}
+.phone-frame {
+width: 375px;
+height: 667px;
+border: 16px solid #111827;
+border-radius: 40px;
+background-color: #fff;
+box-shadow: 0 0 20px rgba(0,0,0,0.2);
+overflow-y: auto;
+position: relative;
+}
+.status-bar, .user-info, .auth-buttons, .search-bar, .card, .modal-content input,
+.modal-content textarea, .modal-content select {
+padding: 10px;
+}
+.modal {
+position: absolute;
+top: 0;
+left: 0;
+width: 100%;
+height: 100%;
+background: rgba(0,0,0,0.4);
+display: none;
+justify-content: center;
+align-items: center;
+}
+.modal-content {
+background: white;
+padding: 20px;
+border-radius: 10px;
+width: 300px;
+}
+.fab {
+position: sticky;
+bottom: 70px;
+left: 50%;
+transform: translateX(-50%);
+background-color: #22c55e;
+color: white;
+width: 56px;
+height: 56px;
+border-radius: 50%;
+font-size: 32px;
+line-height: 56px;
+text-align: center;
+cursor: pointer;
+}
+
+.chat-button {
+  position: sticky;
+  bottom: 20px;
+  right: 20px;
+  width: 56px;
+  height: 56px;
+  background-color: #3b82f6;
+  color: white;
+  border-radius: 50%;
+  border: none;
+  font-size: 28px;
+  font-weight: bold;
+  text-align: center;
+  line-height: 56px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+  cursor: pointer;
+}
