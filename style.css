@@ -39,7 +39,7 @@ body {
       width: 300px;
     }
     .fab {
-      position: absolute;
+      position: sticky;
       bottom: 70px;
       left: 50%;
       transform: translateX(-50%);
