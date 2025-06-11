@@ -133,12 +133,14 @@ async function renderCards() {
     const div = document.createElement('div');
     div.className = 'card';
     div.innerHTML = `
-      <h3>${card.title}</h3>
-      <p><strong>Pris:</strong> ${card.price} DKK</p>
-      <img src="${card.img}" alt="Billede" style="width:100%;border-radius:8px;"/>
-      <p>${card.desc}</p>
-      <p><em>Type: ${card.type}</em></p>
-      <p style="font-size:11px;">Oprettet af: ${card.userEmail}</p>`;
+      <a href="post.html?id=${doc.id}" style="text-decoration:none; color:inherit;">
+        <h3>${card.title}</h3>
+        <p><strong>Pris:</strong> ${card.price} DKK</p>
+        <img src="${card.img}" style="width:100%;border-radius:8px;"/>
+        <p>${card.desc}</p>
+        <p><em>Type: ${card.type}</em></p>
+        <p style="font-size:11px;">Oprettet af: ${card.userEmail}</p>
+      </a>`;
     container.appendChild(div);
   });
 }
