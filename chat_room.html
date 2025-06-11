@@ -140,27 +140,27 @@
         return;
       }
     
-      snapshot.forEach(doc => {
-        const msg = doc.data();
-        console.log("MSG:", msg); // 👈 Debug
-        const p = document.createElement("p");
-        p.textContent = `${msg.from}: ${msg.text}`;
-        messagesDiv.appendChild(p);
-      });
-    });
+      function listenForMessages() {
+  const q = query(
+    collection(db, "messages"),
+    where("postId", "==", postId),
+    orderBy("timestamp")
+  );
 
+  onSnapshot(q, (snapshot) => {
+    messagesDiv.innerHTML = "";
 
-    sendBtn.addEventListener("click", async () => {
-      const text = input.value.trim();
-      if (!text) return;
-      await addDoc(collection(db, "messages"), {
-        postId,
-        from: currentUser.email,
-        to,
-        text,
-        timestamp: serverTimestamp()
-      });
-      input.value = "";
+    if (snapshot.empty) {
+      messagesDiv.innerHTML = "<p>Ingen beskeder fundet.</p>";
+      return;
+    }
+
+    snapshot.forEach(doc => {
+      const msg = doc.data();
+      console.log("MSG:", msg);
+      const p = document.createElement("p");
+      p.textContent = `${msg.from}: ${msg.text}`;
+      messagesDiv.appendChild(p);
     });
   </script>
 </body>
