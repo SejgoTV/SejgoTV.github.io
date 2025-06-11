@@ -14,7 +14,7 @@ body {
       border-radius: 40px;
       background-color: #fff;
       box-shadow: 0 0 20px rgba(0,0,0,0.2);
-      overflow: hidden;
+      overflow-y: auto;
       position: relative;
     }
     .status-bar, .user-info, .auth-buttons, .search-bar, .card, .modal-content input,
