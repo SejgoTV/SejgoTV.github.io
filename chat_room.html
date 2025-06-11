@@ -131,38 +131,24 @@
         where("postId", "==", postId),
         orderBy("timestamp")
       );
-
-    onSnapshot(q, (snapshot) => {
-      messagesDiv.innerHTML = "";
     
-      if (snapshot.empty) {
-        messagesDiv.innerHTML = "<p>Ingen beskeder fundet.</p>";
-        return;
-      }
+      onSnapshot(q, (snapshot) => {
+        messagesDiv.innerHTML = "";
     
-      function listenForMessages() {
-  const q = query(
-    collection(db, "messages"),
-    where("postId", "==", postId),
-    orderBy("timestamp")
-  );
-
-  onSnapshot(q, (snapshot) => {
-    messagesDiv.innerHTML = "";
-
-    if (snapshot.empty) {
-      messagesDiv.innerHTML = "<p>Ingen beskeder fundet.</p>";
-      return;
+        if (snapshot.empty) {
+          messagesDiv.innerHTML = "<p>Ingen beskeder fundet.</p>";
+          return;
+        }
+    
+        snapshot.forEach(doc => {
+          const msg = doc.data();
+          console.log("MSG:", msg);
+          const p = document.createElement("p");
+          p.textContent = `${msg.from}: ${msg.text}`;
+          messagesDiv.appendChild(p);
+        });
+      });
     }
-
-    snapshot.forEach(doc => {
-      const msg = doc.data();
-      console.log("MSG:", msg);
-      const p = document.createElement("p");
-      p.textContent = `${msg.from}: ${msg.text}`;
-      messagesDiv.appendChild(p);
-    });
-  }
   </script>
 </body>
 </html>
