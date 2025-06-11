@@ -19,6 +19,14 @@
       margin-bottom: 10px;
       padding-right: 4px;
     }
+    #messages {
+      scrollbar-width: none;         /* Firefox */
+      -ms-overflow-style: none;      /* IE/Edge */
+    }
+    
+    #messages::-webkit-scrollbar {
+      display: none;                 /* Chrome/Safari */
+    }
 
     textarea {
       width: 100%;
