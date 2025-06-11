@@ -107,7 +107,6 @@
     const params = new URLSearchParams(window.location.search);
     const postId = params.get("postId");
     const to = decodeURIComponent(params.get("to"));
-    alert(to)
 
     const messagesDiv = document.getElementById("messages");
     const input = document.getElementById("messageInput");
@@ -135,32 +134,21 @@
 
       onSnapshot(q, (snapshot) => {
         messagesDiv.innerHTML = "";
+      
+        if (snapshot.empty) {
+          messagesDiv.innerHTML = "<p>Ingen beskeder fundet.</p>";
+          return;
+        }
+      
         snapshot.forEach(doc => {
           const msg = doc.data();
-          const div = document.createElement("div");
-          const isMe = msg.from === currentUser.email;
-          div.className = isMe ? "you" : "them";
-
-          const time = msg.timestamp?.toDate();
-          const timeStr = time
-            ? time.toLocaleString("da-DK", {
-                hour: "2-digit",
-                minute: "2-digit",
-                day: "numeric",
-                month: "short"
-              })
-            : "";
-
-          div.innerHTML = `
-            <div class="message-box">${msg.text}</div>
-            <div class="message-time">${timeStr}</div>
-          `;
-          messagesDiv.appendChild(div);
+          console.log("MSG:", msg); // 👈 Debug
+          const p = document.createElement("p");
+          p.textContent = `${msg.from}: ${msg.text}`;
+          messagesDiv.appendChild(p);
         });
-
-        messagesDiv.scrollTop = messagesDiv.scrollHeight;
       });
-    }
+
 
     sendBtn.addEventListener("click", async () => {
       const text = input.value.trim();
