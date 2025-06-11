@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+  <meta charset="UTF-8" />
+  <title>Opslag</title>
+</head>
+<body>
+  <h1>Opslag</h1>
+  <div id="post-content">Indlæser...</div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDAqXYL5WthlWvjfDBc-NdZCu01ygkrom0",
+      authDomain: "teknologi-a1c06.firebaseapp.com",
+      projectId: "teknologi-a1c06"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const params = new URLSearchParams(window.location.search);
+    const id = params.get("id");
+
+    const postContent = document.getElementById("post-content");
+
+    async function loadPost() {
+      const docRef = doc(db, "posts", id);
+      const docSnap = await getDoc(docRef);
+      if (docSnap.exists()) {
+        const data = docSnap.data();
+        postContent.innerHTML = `
+          <h2>${data.title}</h2>
+          <p>Pris: ${data.price} DKK</p>
+          <img src="${data.img}" style="max-width:100%"><br>
+          <p>${data.desc}</p>
+          <p>Type: ${data.type}</p>
+          <p>Sælger: ${data.userEmail}</p>
+          <a href="chat.html?postId=${id}&to=${encodeURIComponent(data.userEmail)}">
+            <button>Kontakt sælger</button>
+          </a>
+        `;
+      } else {
+        postContent.innerHTML = "Opslag ikke fundet.";
+      }
+    }
+
+    loadPost();
+  </script>
+</body>
+</html>
