@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+  <meta charset="UTF-8" />
+  <title>Din Indbakke</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="chat-box">
+    <h1>Din chatoversigt</h1>
+    <div id="inbox">Indlæser samtaler...</div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    import {
+      getFirestore, collection, query, where, getDocs
+    } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDAqXYL5WthlWvjfDBc-NdZCu01ygkrom0",
+      authDomain: "teknologi-a1c06.firebaseapp.com",
+      projectId: "teknologi-a1c06"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    const inbox = document.getElementById("inbox");
+
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) {
+        alert("Du skal være logget ind for at se dine samtaler.");
+        window.location.href = "index.html";
+        return;
+      }
+
+      const email = user.email;
+      const q = query(collection(db, "messages"), where("from", "==", email));
+      const q2 = query(collection(db, "messages"), where("to", "==", email));
+
+      const [sentSnap, receivedSnap] = await Promise.all([
+        getDocs(q),
+        getDocs(q2)
+      ]);
+
+      const chats = new Map();
+
+      function processSnapshot(snap) {
+        snap.forEach(doc => {
+          const msg = doc.data();
+          const otherUser = msg.from === email ? msg.to : msg.from;
+          const key = `${msg.postId}_${otherUser}`;
+          if (!chats.has(key)) {
+            chats.set(key, {
+              postId: msg.postId,
+              user: otherUser,
+              latest: msg.text
+            });
+          }
+        });
+      }
+
+      processSnapshot(sentSnap);
+      processSnapshot(receivedSnap);
+
+      if (chats.size === 0) {
+        inbox.textContent = "Du har ingen aktive samtaler.";
+        return;
+      }
+
+      inbox.innerHTML = "";
+      chats.forEach(chat => {
+        const link = document.createElement("a");
+        link.href = `chat_room.html?postId=${chat.postId}&to=${encodeURIComponent(chat.user)}`;
+        link.innerHTML = `
+          <div class="card">
+            <strong>Med:</strong> ${chat.user}<br>
+            <strong>Opslag:</strong> ${chat.postId}<br>
+            <em>${chat.latest}</em>
+          </div>
+        `;
+        inbox.appendChild(link);
+      });
+    });
+  </script>
+</body>
+</html>
