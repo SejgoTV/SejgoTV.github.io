@@ -2,8 +2,20 @@
 <html lang="da">
 <head>
   <meta charset="UTF-8" />
-  <title>Chat</title>
+  <title>Chat med sælger</title>
   <link rel="stylesheet" href="style.css" />
+  <style>
+    .you { text-align: right; color: #3b82f6; }
+    .them { text-align: left; color: #111827; }
+    .message-box {
+      background: #f3f4f6;
+      padding: 0.5em 1em;
+      margin: 0.3em;
+      border-radius: 6px;
+      display: inline-block;
+      max-width: 80%;
+    }
+  </style>
 </head>
 <body>
   <div class="phone-frame">
@@ -13,7 +25,8 @@
     </div>
     <div class="chat-box">
       <h1>Chat</h1>
-      <div id="messages" style="max-height:300px; overflow-y:auto;"></div>
+      <div id="messages" style="max-height:300px; overflow-y:auto; border-bottom:1px solid #ccc; padding-bottom:1em;"></div>
+  
       <textarea id="messageInput" placeholder="Skriv besked..."></textarea><br>
       <button id="sendBtn">Send</button>
     </div>
@@ -39,6 +52,7 @@
     const params = new URLSearchParams(window.location.search);
     const postId = params.get("postId");
     const to = params.get("to");
+
     const messagesDiv = document.getElementById("messages");
     const input = document.getElementById("messageInput");
     const sendBtn = document.getElementById("sendBtn");
@@ -46,13 +60,14 @@
     let currentUser;
 
     onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        currentUser = user;
-        await loadMessages();
-      } else {
+      if (!user) {
         alert("Du skal være logget ind for at chatte.");
         window.location.href = "index.html";
+        return;
       }
+
+      currentUser = user;
+      await loadMessages();
     });
 
     async function loadMessages() {
@@ -65,26 +80,29 @@
       const snap = await getDocs(q);
       snap.forEach(doc => {
         const msg = doc.data();
-        const p = document.createElement("p");
-        p.className = "message";
-        p.innerHTML = `<strong>${msg.from}:</strong> ${msg.text}`;
-        messagesDiv.appendChild(p);
+        const div = document.createElement("div");
+        const isMe = msg.from === currentUser.email;
+        div.className = isMe ? "you" : "them";
+        div.innerHTML = `<div class="message-box">${msg.text}</div>`;
+        messagesDiv.appendChild(div);
       });
+
+      // Scroll til bunden
+      messagesDiv.scrollTop = messagesDiv.scrollHeight;
     }
 
     sendBtn.addEventListener("click", async () => {
       const text = input.value.trim();
-      if (text && currentUser) {
-        await addDoc(collection(db, "messages"), {
-          postId,
-          from: currentUser.email,
-          to,
-          text,
-          timestamp: serverTimestamp()
-        });
-        input.value = "";
-        await loadMessages();
-      }
+      if (!text) return;
+      await addDoc(collection(db, "messages"), {
+        postId,
+        from: currentUser.email,
+        to,
+        text,
+        timestamp: serverTimestamp()
+      });
+      input.value = "";
+      await loadMessages();
     });
   </script>
 </body>
